@@ -1,11 +1,12 @@
 import logic
-from data.item_data import raw_data_flat, raw_data_percent
+import data.item_data as data
+import pandas as pd
 
 
 def main():
 
-    stat_flat, stat_percent = logic.create_lol_stats(raw_data_flat, raw_data_percent)
-    my_list = raw_data_flat, raw_data_percent, stat_flat, stat_percent, stat_flat, stat_percent
+    stat_flat, stat_percent = logic.create_lol_stats(data.raw_data_flat, data.raw_data_percent)
+    my_list = data.raw_data_flat, data.raw_data_percent, stat_flat, stat_percent, stat_flat, stat_percent
 
     stat_flat_per_gold, stat_percent_per_gold, stats_flat_per_point, stats_percent_per_point = logic.update_cost_per_point_values(*my_list)
 
@@ -20,9 +21,9 @@ def main():
 
     # print(dict(sorted(both_stat_flat_and_percent_per_point.items(), key=lambda x: x[1])))
 
-    print()
-    print(stat_flat_per_point_sorted)
-    print()
+    # print(stat_flat_per_point_sorted)
+    stat_flat_df = pd.DataFrame(stat_flat_per_point_sorted, index=["Cost per point"])
+    # print(stat_flat_df.T)
 
     kindlegem = {
         "Hp": 200,
@@ -36,13 +37,25 @@ def main():
         "Glory Passive": 1,
         "Cost": 350
     }
-
-    pickaxe = {
-        "Attack": 25,
-        "Cost": 875
-    }
     
-    print(logic.isolate_stat(dark_seal, stat_flat_per_point_sorted))
+    # print(logic.isolate_stat(dark_seal, stat_flat_per_point_sorted))
+
+    print()
+    data_df = pd.DataFrame(data.raw_data_flat, columns=["Amount", "Cost", "Value type"])
+    #print(data_df.T)
+
+    my_data = [data.hp, data.hp_regen, data.mana, data.mana_regen]
+    frame = pd.DataFrame(my_data, columns=["Name", "Amount", "Cost", "Value type"])
+
+    print(frame)
+    # print()
+    # print(list(zip(frame.Amount, frame.Name)))  # retrieve a column (or more)
+    # print()
+    # print(frame.loc[1])  # retrieve a row
+    frame.loc[4] = data.attack  # add a row
+    # frame["Cost per point"] = stat_flat_per_point_sorted  # add a column
+    print()
+    print(frame)
 
 
 if __name__ == "__main__":
