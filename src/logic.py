@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def calc_cost_per_point_values(raw_dataframe: pd.DataFrame):
+def calc_cost_per_point_values(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
     list_of_values = list()
     for row in raw_dataframe.iterrows():
         list_of_values.append(round(row[1]["Cost"] / row[1]["Amount"], 2))
@@ -11,7 +11,9 @@ def calc_cost_per_point_values(raw_dataframe: pd.DataFrame):
     return raw_dataframe
 
 
-def factor_out_one_stat(item_data: dict, cost_per_point_frame: pd.DataFrame, value_type="Flat"):
+def factor_out_one_stat(
+    item_data: dict, cost_per_point_frame: pd.DataFrame, value_type: str
+) -> pd.DataFrame:
 
     total_cost_of_the_item = item_data.pop("Cost")
     item_data_copy = item_data.copy()
@@ -28,7 +30,10 @@ def factor_out_one_stat(item_data: dict, cost_per_point_frame: pd.DataFrame, val
     result_value = round(total_cost_of_the_item / list(item_data_copy.values())[0], 2)
 
     frame_last_index = cost_per_point_frame.tail(1).index.item()
-    cost_per_point_frame.loc[frame_last_index + 1] = {"Name": result_key, "Cost per point": result_value, "Value type": value_type}
+    cost_per_point_frame.loc[frame_last_index + 1] = {
+        "Name": result_key,
+        "Cost per point": result_value,
+        "Value type": value_type,
+    }
 
     return cost_per_point_frame
-
