@@ -1,9 +1,9 @@
 
 
 hp = {"Name": "Health", "Cost": 400, "Amount": 150, "Value type": "Flat"}
-hp_regen = {"Name": "Health Regen", "Cost": 300, "Amount": 100, "Value type": "Percentage"}
+hp_regen = {"Name": "Health Regen", "Cost": 300, "Amount": 100, "Value type": "Per 5 seconds"}
 mana = {"Name": "Mana", "Cost": 350, "Amount": 250, "Value type": "Flat"}
-mana_regen = {"Name": "Mana Regen", "Cost": 250, "Amount": 50, "Value type": "Percentage"}
+mana_regen = {"Name": "Mana Regen", "Cost": 250, "Amount": 50, "Value type": "Per 5 seconds"}
 armor = {"Name": "Armor", "Cost": 300, "Amount": 15, "Value type": "Flat"}
 mr = {"Name": "Magic Resistance", "Cost": 450, "Amount": 25, "Value type": "Flat"}
 attack = {"Name": "Attack Damage", "Cost": 350, "Amount": 10, "Value type": "Flat"}
