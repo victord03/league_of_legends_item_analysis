@@ -1,6 +1,7 @@
 import logic
 import data.item_data as data
 import pandas as pd
+from input_output import operations as iops
 
 
 def main():
@@ -39,14 +40,16 @@ def main():
 
     print()
     frame = logic.factor_out_one_stat(dark_seal, frame)
+    frame = logic.factor_out_one_stat(kindlegem, frame)
 
     target_frame = frame[["Name", "Cost per point", "Value type"]]
     target_frame = target_frame.sort_values(by="Cost per point", ignore_index=True)
     # print(target_frame)
 
-    target_frame.to_csv("data_frame.csv", index=False)
-    new_frame = pd.read_csv("data_frame.csv")
-    print(new_frame)
+    # I/O
+    file_path = "data_frame.csv"
+    iops.save_to_csv_file(frame, file_path)
+    # iops.read_from_csv_file(file_path)
 
 
 if __name__ == "__main__":

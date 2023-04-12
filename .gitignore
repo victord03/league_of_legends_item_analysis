@@ -6,7 +6,7 @@ __pycache__/
 # Manually added by me
 /.idea
 *.pyc
-src/data_frame.csv
+data/data_frame.csv
 
 # C extensions
 *.so
