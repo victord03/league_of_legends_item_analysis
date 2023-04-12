@@ -32,16 +32,21 @@ def main():
         "Health": 200,
         "Ability Haste": 10,
         "Cost": 800,
+        "Value type": "Flat"
     }
 
-    dark_seal = {"Ap": 15, "Hp": 40, "Glory Passive": 1, "Cost": 350}
+    dark_seal = {"AP": 15, "Health": 40, "Glory": 1, "Cost": 350, "Value type": "Passive"}
 
     print()
-    frame = logic.factor_out_one_stat(kindlegem, frame, value_type="Percentage")
+    frame = logic.factor_out_one_stat(dark_seal, frame)
 
     target_frame = frame[["Name", "Cost per point", "Value type"]]
     target_frame = target_frame.sort_values(by="Cost per point", ignore_index=True)
-    print(target_frame)
+    # print(target_frame)
+
+    target_frame.to_csv("data_frame.csv", index=False)
+    new_frame = pd.read_csv("data_frame.csv")
+    print(new_frame)
 
 
 if __name__ == "__main__":
