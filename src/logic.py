@@ -1,28 +1,34 @@
 import pandas as pd
 
 
-# todo: FIX THIS FUNCTION
-def isolate_stat(item_data: dict, dataframe_values_per_point: pd.DataFrame):
+def calc_cost_per_point_values(raw_dataframe: pd.DataFrame):
+    list_of_values = list()
+    for row in raw_dataframe.iterrows():
+        list_of_values.append(round(row[1]["Cost"] / row[1]["Amount"], 2))
 
-    item_data_to_modify = item_data.copy()
-    removed_stats = dict()
+    raw_dataframe["Cost per point"] = list_of_values
 
-    for stat_name in item_data.keys():
+    return raw_dataframe
 
-        print("\n", dataframe_values_per_point.loc[1][0])
 
-        if dataframe_values_per_point.loc[1][0] == stat_name:
-            removed_stats[stat_name] = item_data_to_modify.pop(stat_name)
+def factor_out_one_stat(item_data: dict, cost_per_point_frame: pd.DataFrame, value_type="Flat"):
 
-    for stat_name, value in removed_stats.items():
+    total_cost_of_the_item = item_data.pop("Cost")
+    item_data_copy = item_data.copy()
 
-        stat_cost = round(dataframe_values_per_point[stat_name] * value, 0)
-        item_data_to_modify["Cost"] -= int(stat_cost)
+    for key in item_data:
 
-    dict_temp = item_data_to_modify.copy()
-    isolated_value_cost = dict_temp.pop("Cost")
+        if key in list(cost_per_point_frame["Name"]):
+            index = list(cost_per_point_frame["Name"]).index(key)
+            cost_per_point_of_stat = cost_per_point_frame.iloc[index]["Cost per point"]
+            total_cost_of_the_item -= cost_per_point_of_stat * item_data[key]
+            item_data_copy.pop(key)
 
-    for stat_name, value in dict_temp.items():
-        dict_temp[stat_name] = isolated_value_cost / value
+    result_key = list(item_data_copy.keys())[0]
+    result_value = round(total_cost_of_the_item / list(item_data_copy.values())[0], 2)
 
-    return dict_temp
+    frame_last_index = cost_per_point_frame.tail(1).index.item()
+    cost_per_point_frame.loc[frame_last_index + 1] = {"Name": result_key, "Cost per point": result_value, "Value type": value_type}
+
+    return cost_per_point_frame
+

@@ -15,21 +15,7 @@ def main():
     # print(frame.T.sort_values(by="col", ignore_index=True))   # does not modify original DF
 
 
-    def calc_cost_per_point_values(raw_dataframe: pd.DataFrame):
-        list_of_values = list()
-        for row in raw_dataframe.iterrows():
-            list_of_values.append(round(row[1]["Cost"] / row[1]["Amount"], 2))
-
-        raw_dataframe["Cost per point"] = list_of_values
-
-        return raw_dataframe
-
-
-    frame = calc_cost_per_point_values(frame)
-    target_frame = frame[["Name", "Cost per point", "Value type"]]
-    target_frame = target_frame.sort_values(by="Cost per point", ignore_index=True)
-    print()
-    print(target_frame)
+    frame = logic.calc_cost_per_point_values(frame)
 
     kindlegem = {
         "Health": 200,
@@ -44,9 +30,14 @@ def main():
         "Cost": 350
     }
 
-    isolated_value = logic.isolate_stat(kindlegem, target_frame)
     print()
-    print(isolated_value)
+    frame = logic.factor_out_one_stat(kindlegem, frame, value_type="Percentage")
+
+    target_frame = frame[["Name", "Cost per point", "Value type"]]
+    target_frame = target_frame.sort_values(by="Cost per point", ignore_index=True)
+    print(target_frame)
+
+
 
     # stat_flat_df["CDR"] = isolated_value["Cdr"]
 
