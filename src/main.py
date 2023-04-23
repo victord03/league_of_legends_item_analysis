@@ -25,8 +25,12 @@ def main():
 
     new_frame = read_file(current_path)
 
-    drain = {"Name": "Drain", "Effect": "Mana Regen", "Amount": 1.1, "Cost per point": int(), "Value type": "Per 5 seconds"}
-    # drain = logic.calculate_cost(drain, new_frame)
+
+    new_effect = {"Name": "Drain", "Effect": "Mana Regen", "Amount": 1.1, "Cost per point": int(), "Value type": "Per 5 seconds"}
+
+    # todo: make this section modular (start)
+
+    # new_effect = logic.calculate_cost(new_effect, new_frame)
 
     def add_a_new_row(frame: pd.DataFrame, new_line: dict) -> pd.DataFrame:
         new_line.pop("Effect")
@@ -35,7 +39,10 @@ def main():
         frame.loc[last_index] = new_line
         return frame
 
-    # add_a_new_row(new_frame, drain)
+    # add_a_new_row(new_frame, new_effect)
+
+    # todo: make this section modular (end)
+
     # new_frame = new_frame.sort_values(by="Cost per point", ignore_index=True)
     print(new_frame)
 
