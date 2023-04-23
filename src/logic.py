@@ -12,7 +12,8 @@ def calc_cost_per_point_values(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
 
 
 def factor_out_one_stat(
-    item_data: dict, cost_per_point_frame: pd.DataFrame) -> pd.DataFrame:
+    item_data: dict, cost_per_point_frame: pd.DataFrame
+) -> pd.DataFrame:
 
     total_cost_of_the_item = item_data.pop("Cost")
     value_type = item_data.pop("Value type")
