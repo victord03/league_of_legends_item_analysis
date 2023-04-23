@@ -11,6 +11,17 @@ def calc_cost_per_point_values(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
     return raw_dataframe
 
 
+def calculate_cost(effect: dict, frame: pd.DataFrame) -> dict:
+
+    search_key = effect["Effect"]
+    amount = effect["Amount"]
+
+    index = frame.index[frame["Name"] == search_key].tolist()
+    row = frame.loc[index]
+    effect["Cost per point"] = int(row["Cost per point"]) * amount
+
+    return effect
+
 def factor_out_one_stat(
     item_data: dict, cost_per_point_frame: pd.DataFrame
 ) -> pd.DataFrame:
