@@ -13,6 +13,7 @@ dorans_ring = {
     "AP": 15,
     "Health": 70,
     "Drain": 1,
+    "Focus": 1,
     "Cost": 400,
     "Value type": "Passive",
 }

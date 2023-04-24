@@ -1,6 +1,7 @@
 import logic
 import pandas as pd
 from input_output import operations as iops
+from data import added_items as addi
 
 
 def main():
@@ -9,10 +10,9 @@ def main():
     # frame.loc[i]                                              # retrieve a row (i = index)
     # frame.loc[i] = dict()                                     # add a new row (i = index)
     # frame["Cost per point"] = list()                          # add a new column
-    # frame.drop(i)                                             # delete a row (i = index)
+    # frame.drop(index=i, inplace=True)                         # delete a row in place (i = index)
+    # frame.reset_index(drop=True, inplace=True)                # resets the indices after removing a row
     # frame.sort_values(by="col", ignore_index=True)            # does not modify original DF
-
-    # frame = logic.factor_out_one_stat(dark_seal, frame)
 
     # I/O
     current_path = r"../data/data_frame.csv"
@@ -25,30 +25,24 @@ def main():
 
     new_frame = read_file(current_path)
 
+    new_effect = {
+        "Name": "Drain",
+        "Resource": "Mana",
+        "Amount": 1.1,
+        "Cost per point": int(),
+        "Cost": int(),
+        "Value type": "Per 5 seconds"
+    }
 
-    new_effect = {"Name": "Drain", "Effect": "Mana Regen", "Amount": 1.1, "Cost per point": int(), "Value type": "Per 5 seconds"}
+    frame_b = new_frame
+    frame_b = logic.quantify_a_passive_from_a_known_stat(new_effect, frame_b, passive=True)
+    print(frame_b)
 
-    # todo: make this section modular (start)
+    # new_frame = logic.factor_out_one_stat(addi.dorans_ring, new_frame)
 
-    # new_effect = logic.calculate_cost(new_effect, new_frame)
+    # print()
+    # print(new_frame)
 
-    def add_a_new_row(frame: pd.DataFrame, new_line: dict) -> pd.DataFrame:
-        new_line.pop("Effect")
-        new_line.pop("Amount")
-        last_index = frame.tail(1).index.item()
-        frame.loc[last_index] = new_line
-        return frame
-
-    # add_a_new_row(new_frame, new_effect)
-
-    # todo: make this section modular (end)
-
-    # new_frame = new_frame.sort_values(by="Cost per point", ignore_index=True)
-    print(new_frame)
-
-    # todo: add columns 1) passive: bool 2) resource: str (for "per 5 second" values)
-
-    # new_frame = logic.factor_out_one_stat(, new_frame)
 
     # save_file(new_frame, current_path)
 
