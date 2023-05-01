@@ -34,14 +34,14 @@ def main():
         "Value type": "Per 5 seconds"
     }
 
-    frame_b = new_frame
-    frame_b = logic.quantify_a_passive_from_a_known_stat(new_effect, frame_b, passive=True)
-    print(frame_b)
+    # frame_b = new_frame
+    # frame_b = logic.quantify_a_passive_from_a_known_stat(new_effect, frame_b, passive=True)
+    # print(frame_b)
 
-    # new_frame = logic.factor_out_one_stat(addi.dorans_ring, new_frame)
+    # new_frame = logic.factor_out_one_stat(addi.dark_seal, new_frame)
 
-    # print()
-    # print(new_frame)
+    print()
+    print(new_frame)
 
 
     # save_file(new_frame, current_path)

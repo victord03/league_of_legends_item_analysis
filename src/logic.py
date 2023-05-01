@@ -1,17 +1,15 @@
 import pandas as pd
 
 
-def calc_cost_per_point_values(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
-    """Only used the first time the script is run. Requires manual setup in 'main.py' file but can then be removed
-    forever."""
-    list_of_values = list()
-    for row in raw_dataframe.iterrows():
-        list_of_values.append(round(row[1]["Cost"] / row[1]["Amount"], 2))
+def store_stat_in_df(df: dict, row: pd.DataFrame, amount: float):
+    """Part of the 'calculate_cost' function."""
+    df["Cost per point"] = int(row["Cost per point"]) * amount
+    df["Cost"] = "-"
 
-    raw_dataframe["Cost per point"] = list_of_values
-
-    return raw_dataframe
-
+def store_passive_in_df(df: dict, row: pd.DataFrame, amount: float):
+    """Part of the 'calculate_cost' function."""
+    df["Cost"] = int(row["Cost per point"]) * amount
+    df["Cost per point"] = "-"
 
 def calculate_cost(effect: dict, frame: pd.DataFrame, passive: bool) -> dict:
     """Given an 'effect' dict (see specific structure below) containing a known stat and the DataFrame, this function
@@ -19,7 +17,7 @@ def calculate_cost(effect: dict, frame: pd.DataFrame, passive: bool) -> dict:
 
     effect = {
         "Name": "",
-        "Resource": "EXISTANT STAT",
+        "Resource": "",
         "Amount": int(),
         "Cost per point": int(),
         "Cost": int(),
@@ -36,13 +34,44 @@ def calculate_cost(effect: dict, frame: pd.DataFrame, passive: bool) -> dict:
 
     # todo: modification have been made here
     if not passive:
-        effect["Cost per point"] = int(row["Cost per point"]) * amount
-        effect["Cost"] = "-"
+        store_stat_in_df(effect, row, amount)
     else:
-        effect["Cost per point"] = "-"
-        effect["Cost"] = int(row["Cost per point"]) * amount
+        store_passive_in_df(effect, row, amount)
 
     return effect
+
+
+def modify_dict_for_factoring_out(my_dict: dict, key1="Cost", key2="Value type") -> tuple:
+    """Removes the keys 'Cost' and 'Value type' from the dict to allow for specific calculation."""
+    return my_dict.pop(key1), my_dict.pop(key2)
+
+def find_df_new_last_row_index(df: pd.DataFrame) -> int:
+    """Give a dataframe, will return the next index that can be used to add a new row using the df.loc[index] method."""
+    return df.tail(1).index.item() + 1
+
+def create_df_row(keys: list, values: list) -> dict:
+    """Zips key-value pairs to create a dictionary."""
+    return dict(zip(keys, values))
+
+def add_a_new_row_to_the_df(df: pd.DataFrame, row: dict, index: int):
+    """Give a 'row' dict, adds it to an existing Df, at a specified index."""
+    df.loc[index] = row
+
+def adjust_item_cost(df: pd.DataFrame, compare_dict: dict, item_cost: int) -> tuple:
+
+    compare_dict_copy = compare_dict.copy()
+
+    for key in compare_dict:
+
+        if key in list(df["Name"]):
+            index = list(df["Name"]).index(key)
+            cost_per_point_of_stat = df.iloc[index]["Cost per point"]
+            item_cost -= cost_per_point_of_stat * compare_dict[key]
+            compare_dict_copy.pop(key)
+
+    return item_cost, compare_dict_copy
+
+
 
 def factor_out_one_stat(
     item_data: dict, cost_per_point_frame: pd.DataFrame
@@ -52,36 +81,36 @@ def factor_out_one_stat(
 
     # todo: need to separate iterations in two parts: one for stats, a second for passives
 
-    total_cost_of_the_item = item_data.pop("Cost")
-    value_type = item_data.pop("Value type")
-    item_data_copy = item_data.copy()
+    total_cost_of_the_item, value_type = item_data.pop("Cost"), item_data.pop("Value type")
 
-    for key in item_data:
-
-        if key in list(cost_per_point_frame["Name"]):
-            index = list(cost_per_point_frame["Name"]).index(key)
-            cost_per_point_of_stat = cost_per_point_frame.iloc[index]["Cost per point"]
-            total_cost_of_the_item -= cost_per_point_of_stat * item_data[key]
-            item_data_copy.pop(key)
+    total_cost_of_the_item, item_data_copy = adjust_item_cost(cost_per_point_frame, item_data, total_cost_of_the_item)
 
     result_key = list(item_data_copy.keys())[0]
     result_value = round(total_cost_of_the_item / list(item_data_copy.values())[0], 2)
 
-    frame_last_index = cost_per_point_frame.tail(1).index.item()
-    cost_per_point_frame.loc[frame_last_index + 1] = {
-        "Name": result_key,
-        "Cost per point": result_value,
-        "Value type": value_type,
-    }
+    new_last_row_index = find_df_new_last_row_index(cost_per_point_frame)
+
+    keys = ["Name", "Cost per point", "Value type"]
+    values = [result_key, result_value, value_type]
+    new_row_dict = create_df_row(keys, values)
+
+    add_a_new_row_to_the_df(cost_per_point_frame, new_row_dict, new_last_row_index)
 
     return cost_per_point_frame
 
 
+# todo: needs to be fixed
 def quantify_a_passive_from_a_known_stat(new_effect: dict, frame: pd.DataFrame, passive: bool) -> pd.DataFrame:
     """Given a passive has correctly been translated to a single, known stat, this function will calculate its
     'cost per point' and append it to the DataFrame. The 'new_effect' dict has to have the specific keys, shown below
 
-    new_effect = {"Name": "", "Resource": "EXISTANT STAT", "Amount": int(), "Cost per point": int(), "Value type": ""}
+    new_effect = {
+        "Name": "",
+        "Resource": "",
+        "Amount": int(),
+        "Cost per point": int(),
+        "Value type": ""
+    }
     """
     new_effect = calculate_cost(new_effect, frame, passive)
     new_effect.pop("Resource")
