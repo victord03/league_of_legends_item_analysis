@@ -1,6 +1,22 @@
 import pandas as pd
 from os import path, chdir
 
+"""
+# I/O
+current_path = r"../data/data_frame.csv"
+
+def save_file(frame: pd.DataFrame, file_path: str) -> None:
+    iops.save_to_csv_file(frame, file_path)
+
+def read_file(file_path: str) -> pd.DataFrame:
+    return iops.read_from_csv_file(file_path)
+
+frame = read_file(current_path)
+
+# save_file(frame, current_path)
+
+"""
+
 
 def save_to_csv_file(my_dataframe: pd.DataFrame, file_path="data_frame.csv") -> None:
 

@@ -1,7 +1,6 @@
-import logic
-import pandas as pd
-from input_output import operations as iops
-from data import added_items as addi
+import logic as lg
+import data.items as item_data
+from data.db import stat_cost_per_point
 
 
 def main():
@@ -14,37 +13,27 @@ def main():
     # frame.reset_index(drop=True, inplace=True)                # resets the indices after removing a row
     # frame.sort_values(by="col", ignore_index=True)            # does not modify original DF
 
-    # I/O
-    current_path = r"../data/data_frame.csv"
+    db = stat_cost_per_point
 
-    def save_file(frame: pd.DataFrame, file_path: str) -> None:
-        iops.save_to_csv_file(frame, file_path)
+    # todo: make the following section modular (reusable function)
 
-    def read_file(file_path: str) -> pd.DataFrame:
-        return iops.read_from_csv_file(file_path)
+    item = item_data.trinity_force
+    item_name = item_data.trinity_force["Name"]
+    item_cost = item_data.trinity_force["Cost"]
 
-    new_frame = read_file(current_path)
+    item2 = item_data.dead_mans_place
+    item2_name = item_data.dead_mans_place["Name"]
+    item2_cost = item_data.dead_mans_place["Cost"]
 
-    new_effect = {
-        "Name": "Drain",
-        "Resource": "Mana",
-        "Amount": 1.1,
-        "Cost per point": int(),
-        "Cost": int(),
-        "Value type": "Per 5 seconds"
-    }
+    stats_worth = lg.calculate_worth_of_raw_stats(item, db)
+    print(f"{item_name} stats worth: {stats_worth:,} (representing {round((stats_worth / item_cost) * 100, 2)}% of the item price).")
+    print("Number of passives:", lg.give_number_of_passives(item))
+    print("Has Mythic:", lg.has_got_a_mythic(item))
 
-    # frame_b = new_frame
-    # frame_b = logic.quantify_a_passive_from_a_known_stat(new_effect, frame_b, passive=True)
-    # print(frame_b)
-
-    # new_frame = logic.factor_out_one_stat(addi.dark_seal, new_frame)
-
-    print()
-    print(new_frame)
-
-
-    # save_file(new_frame, current_path)
+    stats_worth = lg.calculate_worth_of_raw_stats(item2, db)
+    print(f"{item2_name} stats worth: {stats_worth:,} (representing {round((stats_worth / item2_cost) * 100, 2)}% of the item price).")
+    print("Number of passives:", lg.give_number_of_passives(item2))
+    print("Has Mythic:", lg.has_got_a_mythic(item2))
 
 
 if __name__ == "__main__":
